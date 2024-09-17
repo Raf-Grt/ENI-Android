@@ -10,7 +10,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -19,11 +25,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import fr.eni.eni_shop.datastore.DataStoreManager
 import fr.eni.eni_shop.navigation.EniShopNavHost
 import fr.eni.eni_shop.navigation.FloatingBtnAddArticle
 import fr.eni.eni_shop.ui.screen.ArticleDetails
 import fr.eni.eni_shop.ui.screen.ArticleForm
 import fr.eni.eni_shop.ui.screen.ArticleList
+import fr.eni.eni_shop.ui.screen.MainApp
 import fr.eni.eni_shop.ui.shared.Header
 import fr.eni.eni_shop.ui.theme.EniShopTheme
 
@@ -32,27 +40,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            EniShopTheme {
-                val navController = rememberNavController()
+            val context = LocalContext.current
+            val dataStoreManager = DataStoreManager(context)
 
-                Scaffold(
-                    topBar = { Header(navController) },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 10.dp),
-                    floatingActionButton = {
-                        FloatingBtnAddArticle(navController)
-                    },
-                    floatingActionButtonPosition = FabPosition.End
-                ) { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                    ) {
-                        EniShopNavHost(navController = navController)
-                    }
-                }
-            }
+            MainApp(dataStoreManager = dataStoreManager)
         }
     }
 }
+
