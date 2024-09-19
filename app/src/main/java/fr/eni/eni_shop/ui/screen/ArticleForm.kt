@@ -114,7 +114,6 @@ fun ArticleForm(
         ) {
             Button(onClick = {
                 articleViewModel.createNewArticle(Article(
-                    id = 0L,
                     title = title,
                     description = description,
                     price = price.toFloat(),

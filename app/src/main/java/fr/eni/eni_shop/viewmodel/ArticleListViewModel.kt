@@ -60,8 +60,7 @@ class ArticleListViewModel(articleRepository: ArticleRepository): ViewModel() {
     fun createNewArticle(article: Article) {
         viewModelScope.launch {
             val result = RetrofitClient.articleApiService.createArticle(article)
-            val newList = _articles.value + result
-            _articles.value = newList
+            _articles.value += result
             _filteredArticles.value = _articles.value
         }
     }
