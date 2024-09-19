@@ -2,7 +2,6 @@ package fr.eni.eni_shop.ui.screen
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -29,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -44,20 +41,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import fr.eni.eni_shop.R
 import fr.eni.eni_shop.bo.Article
-import fr.eni.eni_shop.viewmodel.ArticleViewModel
+import fr.eni.eni_shop.viewmodel.ArticleListViewModel
 
 
 @Composable
 fun ArticleList(
-    articleViewModel: ArticleViewModel = viewModel(factory = ArticleViewModel.Factory),
+    articleListViewModel: ArticleListViewModel = viewModel(factory = ArticleListViewModel.Factory),
     navBtn: (id: Long) -> Unit
     ) {
-    val categories by articleViewModel.categories.collectAsState()
-    val articles by articleViewModel.filteredArticles.collectAsState()
+    val categories by articleListViewModel.categories.collectAsState()
+    val articles by articleListViewModel.filteredArticles.collectAsState()
 
     Column {
         // ========== Categories elements ==========
-        CategoriesFilterChips(categories = categories, articleViewModel = articleViewModel)
+        CategoriesFilterChips(categories = categories, articleListViewModel = articleListViewModel)
         Spacer(modifier = Modifier.height(26.dp))
 
         // ========== Articles elements ==========
@@ -93,8 +90,8 @@ fun ArticleCard(article: Article, navBtn: (id: Long) -> Unit) {
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
-                model = secureUrl(article.urlImage),
-                contentDescription = article.name,
+                model = secureUrl(article.image),
+                contentDescription = article.title,
                 placeholder = painterResource(id = R.drawable.img_not_available),
                 modifier = Modifier
                     .size(64.dp)
@@ -104,12 +101,12 @@ fun ArticleCard(article: Article, navBtn: (id: Long) -> Unit) {
         }
         Spacer(modifier = Modifier.height(10.dp))
         Text(
-            text = article.name,
+            text = article.title,
             fontWeight = FontWeight.Bold,
-            modifier = Modifier.clickable {
-                val googleIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=${article.name}"))
-                context.startActivity(googleIntent)
-            }
+//            modifier = Modifier.clickable {
+//                val googleIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.google.com/search?q=${article.name}"))
+//                context.startActivity(googleIntent)
+//            }
         )
         Spacer(modifier = Modifier.height(10.dp))
         Row(
@@ -124,7 +121,7 @@ fun ArticleCard(article: Article, navBtn: (id: Long) -> Unit) {
 
 
 @Composable
-fun CategoriesFilterChips(categories: List<String>, articleViewModel: ArticleViewModel) {
+fun CategoriesFilterChips(categories: List<String>, articleListViewModel: ArticleListViewModel) {
     var selectedCat by rememberSaveable {
         mutableStateOf<String?>(null)
     }
@@ -136,9 +133,9 @@ fun CategoriesFilterChips(categories: List<String>, articleViewModel: ArticleVie
                 onClick = {
                     selectedCat = if (selectedCat == category) null else category
                     if (selectedCat == category) {
-                        articleViewModel.filterList(category)
+                        articleListViewModel.filterList(category)
                     } else {
-                        articleViewModel.filterList("")
+                        articleListViewModel.filterList("")
                     }
                 },
                 label = { Text(category) }

@@ -67,7 +67,7 @@ fun Header(navController: NavHostController, dataStoreManager: DataStoreManager)
     )
     DropdownMenu(
         expanded = isMenuExpanded,
-        onDismissRequest = { isMenuExpanded = !isMenuExpanded }
+        onDismissRequest = { isMenuExpanded = false }
     ) {
         DarkModeSwitch(dataStoreManager)
     }
@@ -100,12 +100,10 @@ fun DarkModeSwitch(dataStoreManager: DataStoreManager) {
 
     val coroutineScope = rememberCoroutineScope()
 
-    DropdownMenuItem(text = {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text = "Dark Mode : ")
-            Spacer(modifier = Modifier.height(6.dp))
+    DropdownMenuItem(
+        text = { Text(text = "Dark Mode : ") },
+        onClick = {},
+        trailingIcon = {
             Switch(
                 checked = isDarkModeEnabled,
                 onCheckedChange = {
@@ -115,5 +113,5 @@ fun DarkModeSwitch(dataStoreManager: DataStoreManager) {
                 }
             )
         }
-    }, onClick = {})
+    )
 }

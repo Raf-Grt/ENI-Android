@@ -2,12 +2,9 @@ package fr.eni.eni_shop
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextContains
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import fr.eni.eni_shop.repository.ArticleRepository
 import fr.eni.eni_shop.ui.screen.ArticleDetails
-import fr.eni.eni_shop.viewmodel.ArticleViewModel
 import org.junit.Rule
 import org.junit.Test
 

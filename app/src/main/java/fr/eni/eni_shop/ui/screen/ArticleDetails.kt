@@ -26,31 +26,28 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import fr.eni.eni_shop.R
-import fr.eni.eni_shop.dao.memory.ArticleDaoMemoryImpl
-import fr.eni.eni_shop.viewmodel.ArticleViewModel
+import fr.eni.eni_shop.viewmodel.ArticleDetailViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 @Composable
-fun ArticleDetails(id: Long, articleViewModel: ArticleViewModel = viewModel(factory = ArticleViewModel.Factory)) {
+fun ArticleDetails(id: Long, articleViewModel: ArticleDetailViewModel = viewModel(factory = ArticleDetailViewModel.Factory)) {
     LaunchedEffect(id) {
-        articleViewModel.getArticleById(id)
+        articleViewModel.initArticle(id)
     }
 
-    val article by articleViewModel.currentArticle.collectAsState()
+    val article by articleViewModel.article.collectAsState()
 
     if (article == null) return
 
     val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
     val formattedDate = dateFormat.format(article.date)
 
-    var isChecked by remember {
-        mutableStateOf(false)
-    }
+    val isArticleSaved by articleViewModel.isArticleSaved.collectAsState()
 
     Column {
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = article.name, fontWeight = FontWeight.Bold, fontSize = 20.sp)
+        Text(text = article.title, fontWeight = FontWeight.Bold, fontSize = 20.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
         Row(
@@ -58,8 +55,8 @@ fun ArticleDetails(id: Long, articleViewModel: ArticleViewModel = viewModel(fact
             modifier = Modifier.fillMaxWidth()
         ) {
             AsyncImage(
-                model = article.urlImage,
-                contentDescription = article.name,
+                model = article.image,
+                contentDescription = article.title,
                 placeholder = painterResource(id = R.drawable.img_not_available),
                 modifier = Modifier.size(200.dp)
             )
@@ -81,8 +78,13 @@ fun ArticleDetails(id: Long, articleViewModel: ArticleViewModel = viewModel(fact
             verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "Favoris")
-            Checkbox(checked = isChecked, onCheckedChange = {
-                isChecked = !isChecked
+            Checkbox(checked = isArticleSaved, onCheckedChange = { it ->
+                if (it) {
+                    articleViewModel.saveArticleInDb(article)
+                } else {
+                    articleViewModel.deleteArticleInDb(article)
+                }
+
             })
         }
     }

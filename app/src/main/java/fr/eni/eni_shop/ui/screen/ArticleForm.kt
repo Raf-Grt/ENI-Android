@@ -16,6 +16,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,10 +26,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import fr.eni.eni_shop.bo.Article
+import fr.eni.eni_shop.viewmodel.ArticleListViewModel
 
 @Composable
-fun ArticleForm() {
-    var name by rememberSaveable {
+fun ArticleForm(
+    articleViewModel: ArticleListViewModel = viewModel(factory = ArticleListViewModel.Factory),
+    navBtn: () -> Unit
+) {
+    var title by rememberSaveable {
         mutableStateOf("")
     }
 
@@ -40,11 +47,15 @@ fun ArticleForm() {
         mutableStateOf("")
     }
 
+    var image by rememberSaveable {
+        mutableStateOf("")
+    }
+
     var category by rememberSaveable {
         mutableStateOf("")
     }
 
-    val fruits: List<String> = listOf("electronics", "men's clothing","women's clothing", "Other")
+    val categories by articleViewModel.categories.collectAsState(initial = emptyList())
 
     val context = LocalContext.current
 
@@ -54,8 +65,8 @@ fun ArticleForm() {
     ) {
         TextField(
             modifier = Modifier.fillMaxWidth(),
-            value = name, 
-            onValueChange = {name = it},
+            value = title,
+            onValueChange = {title = it},
             label = {
                 Text(text = "Titre")
             }
@@ -79,10 +90,20 @@ fun ArticleForm() {
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
         )
+
+        TextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = image,
+            onValueChange = {image = it},
+            label = {
+                Text(text = "Image")
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal)
+        )
         
         DynamicSelectTextField(
             selectedValue = category,
-            options = fruits,
+            options = categories,
             label = "Choissir une catgorie",
             onValueChangedEvent = { category = it }
         )
@@ -92,7 +113,15 @@ fun ArticleForm() {
             horizontalArrangement = Arrangement.Center
         ) {
             Button(onClick = {
-                Toast.makeText(context, "Article enregistré", Toast.LENGTH_SHORT).show()
+                articleViewModel.createNewArticle(Article(
+                    id = 0L,
+                    title = title,
+                    description = description,
+                    price = price.toFloat(),
+                    image = image,
+                    category = category
+                ))
+                navBtn()
             }) {
                 Text(text = "Enregistrer")
             }

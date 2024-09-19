@@ -1,7 +1,7 @@
 package fr.eni.eni_shop.dao
 
 import fr.eni.eni_shop.dao.memory.ArticleDaoMemoryImpl
-import fr.eni.eni_shop.dao.network.ArticleDaoNetworkImpl
+import fr.eni.eni_shop.dao.memory.ArticleDaoRoom
 
 abstract class DaoFactory {
     companion object {
@@ -10,7 +10,8 @@ abstract class DaoFactory {
 
             when(type) {
                 DaoType.MEMORY -> dao = ArticleDaoMemoryImpl()
-                DaoType.NETWORK -> dao = ArticleDaoNetworkImpl()
+                DaoType.NETWORK -> TODO("")
+                DaoType.ROOM -> TODO("")
             }
 
             return dao

@@ -35,7 +35,10 @@ fun EniShopNavHost(
             }
         }
         composable("articleForm") {
-            ArticleForm()
+            val navBtnComportement = {
+                navController.navigate("articleList")
+            }
+            ArticleForm(navBtn = navBtnComportement)
         }
     }
 }
